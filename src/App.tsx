@@ -22,6 +22,7 @@ function App() {
     data,
     isLoading
   } = useQuery(['tv_shows', count], () => getMostPopularShows(count), { keepPreviousData: true })
+  console.log(data)
 
   function LoadingRender() {
     return (
@@ -41,21 +42,27 @@ function App() {
 
 
   return (
-    <div className="App">
-      {isLoading && LoadingRender()}
-      {!isLoading && (data.tv_shows as Show[]).map((show) => {
-        return <img src={show.image_thumbnail_path} alt={show.name} key={show.name} style={{
-          width: '100%',
-          height: '100%',
-        }}/>
-      })}
+    <div>
+      <h1>TV Shows</h1>
+      <div className="App">
+        {isLoading && LoadingRender()}
+        {!isLoading && (data.tv_shows as Show[]).map((show) => {
+          return <img src={show.image_thumbnail_path} alt={show.name} key={show.name} style={{
+            width: '100%',
+            height: '100%',
+          }}/>
+        })}
+      </div>
       <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          Next page
-        </button>
-        <button onClick={() => setCount((count) => count - 1)}>
+        <button onClick={() => setCount((count) => Math.max(1, count - 1))}>
           Prev page
         </button>
+        <button onClick={() => setCount((count) => Math.min(count + 1, data.pages))}>
+          Next page
+        </button>
+      </div>
+      <div>
+        <span>Page {data.page} of {data.pages}</span>
       </div>
     </div>
   )
